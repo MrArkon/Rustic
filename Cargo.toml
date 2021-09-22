@@ -1,0 +1,10 @@
+[package]
+name        = "rustic"
+version     = "0.1.0"
+edition     = "2018" # TODO: Update to 2021 editon when it's released in Oct.
+publish     = false
+license     = "AGPL-3.0-or-later"
+authors     = ["MrArkon <mrarkon@outlook.com>"]
+repository  = "https://github.com/MrArkon/Rustic"
+
+[dependencies]
