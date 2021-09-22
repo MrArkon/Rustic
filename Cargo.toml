@@ -8,3 +8,4 @@ authors     = ["MrArkon <mrarkon@outlook.com>"]
 repository  = "https://github.com/MrArkon/Rustic"
 
 [dependencies]
+serenity    = "0.10.9"
