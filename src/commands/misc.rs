@@ -26,7 +26,10 @@ async fn ping(ctx: &Context, msg: &Message) -> CommandResult {
     let runners = manager.runners.lock().await;
 
     let latency = match runners.get(&ShardId(ctx.shard_id)) {
-        Some(runner) => runner.latency,
+        Some(runner) => match runner.latency {
+            Some(ms) => format!("{} ms", ms.as_millis()),
+            _ => "? ms".to_string(),
+        },
         None => {
             msg.reply(ctx, "Something went wrong, Please try again.").await?;
 
@@ -34,7 +37,7 @@ async fn ping(ctx: &Context, msg: &Message) -> CommandResult {
         }
     };
 
-    msg.channel_id.say(&ctx.http, &format!("Websocket: {:?} ms", latency.unwrap().as_millis()))
+    msg.channel_id.say(&ctx.http, &format!("Websocket: {}", latency))
         .await?;
 
     Ok(())
