@@ -14,13 +14,15 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 mod settings;
+mod commands;
 
 use log::{error, info};
 use pretty_env_logger::formatted_builder;
 use serenity::{
     async_trait,
+    client::bridge::gateway::ShardManager,
     framework::standard::{
-        help_commands, macros::help, Args, CommandGroup, CommandResult, HelpOptions,
+        help_commands, macros::{group, help}, Args, CommandGroup, CommandResult, HelpOptions,
         StandardFramework,
     },
     http::Http,
@@ -31,11 +33,19 @@ use serenity::{
         id::UserId,
         prelude::{Activity, GuildId},
     },
-    prelude::{Client, Context, EventHandler},
+    prelude::{Client, Context, EventHandler, TypeMapKey},
 };
-use std::collections::HashSet;
+use std::{collections::HashSet, sync::Arc};
+use tokio::sync::Mutex;
+use commands::misc::*;
 
 use crate::settings::settings;
+
+struct ShardManagerContainer;
+
+impl TypeMapKey for ShardManagerContainer {
+    type Value = Arc<Mutex<ShardManager>>;
+}
 
 struct Handler;
 
@@ -69,6 +79,10 @@ impl EventHandler for Handler {
         info!("Reconnected")
     }
 }
+
+#[group]
+#[commands(ping)]
+struct Misc;
 
 #[help]
 #[max_levenshtein_distance(2)]
@@ -117,6 +131,7 @@ async fn main() {
                 .allow_dm(false)
                 .case_insensitivity(true)
         })
+        .group(&MISC_GROUP)
         .help(&BOT_HELP);
 
     let mut client = Client::builder(&settings().bot.token)
@@ -124,6 +139,13 @@ async fn main() {
         .framework(framework)
         .await
         .expect("Something went wrong while building the client.");
+
+    {
+        let mut data = client.data.write().await;
+
+        data.insert::<ShardManagerContainer>(Arc::clone(&client.shard_manager));
+    }
+
     let shard_manager = client.shard_manager.clone();
 
     tokio::spawn(async move {
