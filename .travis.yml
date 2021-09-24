@@ -1,0 +1,18 @@
+language: rust
+cache:
+ directories:
+  - $HOME/.cargo
+before_script:
+- rustup component add rustfmt
+- rustup component add clippy
+rust:
+  - stable
+  - beta
+  - nightly
+matrix:
+  allow_failures:
+    - rust: nightly
+script:
+  - cargo build --verbose
+  - cargo fmt
+  - cargo clippy
