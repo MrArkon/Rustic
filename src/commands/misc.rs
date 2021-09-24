@@ -31,13 +31,15 @@ async fn ping(ctx: &Context, msg: &Message) -> CommandResult {
             _ => "? ms".to_string(),
         },
         None => {
-            msg.reply(ctx, "Something went wrong, Please try again.").await?;
+            msg.reply(ctx, "Something went wrong, Please try again.")
+                .await?;
 
             return Ok(());
         }
     };
 
-    msg.channel_id.say(&ctx.http, &format!("Websocket: {}", latency))
+    msg.channel_id
+        .say(&ctx.http, &format!("Websocket: {}", latency))
         .await?;
 
     Ok(())
