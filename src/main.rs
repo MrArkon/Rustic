@@ -13,17 +13,19 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-mod settings;
 mod commands;
+mod settings;
 
+use commands::misc::*;
 use log::{error, info};
 use pretty_env_logger::formatted_builder;
 use serenity::{
     async_trait,
     client::bridge::gateway::ShardManager,
     framework::standard::{
-        help_commands, macros::{group, help}, Args, CommandGroup, CommandResult, HelpOptions,
-        StandardFramework,
+        help_commands,
+        macros::{group, help},
+        Args, CommandGroup, CommandResult, HelpOptions, StandardFramework,
     },
     http::Http,
     model::{
@@ -37,7 +39,6 @@ use serenity::{
 };
 use std::{collections::HashSet, sync::Arc};
 use tokio::sync::Mutex;
-use commands::misc::*;
 
 use crate::settings::settings;
 
