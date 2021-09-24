@@ -1,0 +1,10 @@
+[bot]
+token          = "Put your token here"
+prefix         = "r?"
+application_id = 0
+
+[logging]
+level          = "WARN"
+
+    [logging.filters]
+    rustic     = "INFO"
