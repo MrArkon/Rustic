@@ -72,8 +72,11 @@ impl EventHandler for Handler {
             );
         }
 
-        ctx.set_activity(Activity::listening(&format!("@{} help", ready.user.name)))
-            .await;
+        ctx.set_activity(Activity::watching(&format!(
+            "{} servers!",
+            ready.guilds.len()
+        )))
+        .await;
     }
 
     async fn resume(&self, _: Context, _: ResumedEvent) {
