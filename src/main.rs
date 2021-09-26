@@ -16,9 +16,10 @@
 mod commands;
 mod settings;
 
-use commands::misc::*;
+use commands::{fun::*, misc::*};
 use log::{error, info};
 use pretty_env_logger::formatted_builder;
+use reqwest::Client as ReqwestClient;
 use serenity::{
     async_trait,
     client::bridge::gateway::ShardManager,
@@ -37,15 +38,20 @@ use serenity::{
     },
     prelude::{Client, Context, EventHandler, TypeMapKey},
 };
-use std::{collections::HashSet, sync::Arc};
+use std::{collections::HashSet, error::Error, sync::Arc};
 use tokio::sync::Mutex;
 
 use crate::settings::settings;
 
 struct ShardManagerContainer;
+struct ReqwestContainer;
 
 impl TypeMapKey for ShardManagerContainer {
     type Value = Arc<Mutex<ShardManager>>;
+}
+
+impl TypeMapKey for ReqwestContainer {
+    type Value = ReqwestClient;
 }
 
 struct Handler;
@@ -88,6 +94,10 @@ impl EventHandler for Handler {
 #[commands(ping)]
 struct Misc;
 
+#[group]
+#[commands(cat)]
+struct Fun;
+
 #[help]
 #[max_levenshtein_distance(2)]
 async fn bot_help(
@@ -104,7 +114,7 @@ async fn bot_help(
 }
 
 #[tokio::main]
-async fn main() {
+async fn main() -> Result<(), Box<dyn Error + Send + Sync>> {
     // Initialize settings
     settings::init();
 
@@ -136,6 +146,7 @@ async fn main() {
                 .case_insensitivity(true)
         })
         .group(&MISC_GROUP)
+        .group(&FUN_GROUP)
         .help(&BOT_HELP);
 
     let mut client = Client::builder(&settings().bot.token)
@@ -146,8 +157,10 @@ async fn main() {
 
     {
         let mut data = client.data.write().await;
+        let reqwest_client = ReqwestClient::builder().build()?;
 
         data.insert::<ShardManagerContainer>(Arc::clone(&client.shard_manager));
+        data.insert::<ReqwestContainer>(reqwest_client);
     }
 
     let shard_manager = client.shard_manager.clone();
@@ -162,4 +175,6 @@ async fn main() {
     if let Err(why) = client.start_autosharded().await {
         error!("Something went wrong while starting the client: {:?}", why);
     }
+
+    Ok(())
 }
