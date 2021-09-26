@@ -29,5 +29,12 @@
   </a>
 </p>
 
+## Setup
+After cloning the repository, Rename `config_example.toml` to `config.toml`
+
+Make an application on Discord's [developer portal](https://discord.com/developers/applications) and copy the bot token & application ID to the `config.toml` file
+
+Assuming you have [Rust](https://rust-lang.org) & [Cargo](https://github.com/rust-lang/cargo) installed, you should be able to run the bot with `cargo run --release`.
+
 ## License
 Rustic is licensed under the AGPL 3.0 license. See the file [`LICENSE`](https://github.com/MrArkon/Rustic/blob/master/LICENSE) for more information.
