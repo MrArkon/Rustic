@@ -25,7 +25,7 @@
   </a>
   <a href="https://www.codacy.com/gh/MrArkon/Rustic/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=MrArkon/Rustic&amp;utm_campaign=Badge_Grade">
     <img alt="Code Quality" 
-         src="https://img.shields.io/codacy/grade/da61ec9b328e4b8aa8595339990d1964?logo=codacy&style=for-the-badge">
+         src="https://img.shields.io/codacy/grade/0ee26216e06b4f5a98c5240a1ddd87f1?logo=codacy&style=for-the-badge">
   </a>
 </p>
 
