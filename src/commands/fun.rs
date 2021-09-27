@@ -48,7 +48,9 @@ async fn cat(ctx: &Context, msg: &Message) -> CommandResult {
 }
 
 #[command]
-#[aliases("8ball", "8b", "eightball")]
+#[min_args(1)]
+#[usage = "<question>"]
+#[aliases("8ball", "8b")]
 #[description = "Ask a question to the magic 8ball"]
 async fn eightball(ctx: &Context, msg: &Message) -> CommandResult {
     let responses: [&str; 20] = [
@@ -75,13 +77,13 @@ async fn eightball(ctx: &Context, msg: &Message) -> CommandResult {
     ];
 
     msg.reply(
-            &ctx.http,
-            &format!(
-                ":8ball: **8ball:** {}",
-                responses[rand::thread_rng().gen_range(0..=20)]
-            ),
-        )
-        .await?;
+        &ctx.http,
+        &format!(
+            ":8ball: **8ball:** {}",
+            responses[rand::thread_rng().gen_range(0..=20)]
+        ),
+    )
+    .await?;
 
     Ok(())
 }
