@@ -25,7 +25,7 @@ use serenity::{
     client::bridge::gateway::ShardManager,
     framework::standard::{
         help_commands,
-        macros::{group, help},
+        macros::{group, help, hook},
         Args, CommandGroup, CommandResult, HelpOptions, StandardFramework,
     },
     http::Http,
@@ -113,6 +113,14 @@ async fn bot_help(
     Ok(())
 }
 
+#[hook]
+async fn after(_ctx: &Context, _msg: &Message, name: &str, result: CommandResult) {
+    match result {
+        Ok(()) => {}
+        Err(why) => error!("Command '{}' returned an error {:?}", name, why),
+    }
+}
+
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error + Send + Sync>> {
     // Initialize settings
@@ -145,6 +153,7 @@ async fn main() -> Result<(), Box<dyn Error + Send + Sync>> {
                 .allow_dm(false)
                 .case_insensitivity(true)
         })
+        .after(after)
         .group(&MISC_GROUP)
         .group(&FUN_GROUP)
         .help(&BOT_HELP);
