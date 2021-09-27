@@ -8,7 +8,7 @@ use serenity::{
 use crate::ShardManagerContainer;
 
 #[command]
-#[only_in(guilds)]
+#[description = "Check if the bot is working"]
 async fn ping(ctx: &Context, msg: &Message) -> CommandResult {
     let data_read = ctx.data.read().await;
 
