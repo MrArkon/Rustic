@@ -18,13 +18,13 @@ async fn cat(ctx: &Context, msg: &Message) -> CommandResult {
         .get::<ReqwestContainer>()
         .cloned()
         .unwrap();
-    let request = client.get("http://shibe.online/api/cats").send().await?;
+    let request = client.get("https://shibe.online/api/cats").send().await?;
 
     if request.status() != 200 {
         msg.channel_id
             .say(
                 &ctx.http,
-                "Something went wrong while trying to find a cat, please try again later.",
+                "Something went wrong, please try again later.",
             )
             .await?;
 
