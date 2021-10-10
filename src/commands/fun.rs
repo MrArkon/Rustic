@@ -22,10 +22,7 @@ async fn cat(ctx: &Context, msg: &Message) -> CommandResult {
 
     if request.status() != 200 {
         msg.channel_id
-            .say(
-                &ctx.http,
-                "Something went wrong, please try again later.",
-            )
+            .say(&ctx.http, "Something went wrong, please try again later.")
             .await?;
 
         return Ok(());
