@@ -8,6 +8,7 @@ use serenity::{
 use crate::ReqwestContainer;
 
 #[command]
+#[bucket = "basic"]
 #[description = "Find some cute cat pictures!"]
 async fn cat(ctx: &Context, msg: &Message) -> CommandResult {
     let client = ctx

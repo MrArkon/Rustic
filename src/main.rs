@@ -153,6 +153,8 @@ async fn main() -> Result<(), Box<dyn Error + Send + Sync>> {
                 .allow_dm(false)
                 .case_insensitivity(true)
         })
+        .bucket("basic", |b| b.time_span(5).limit(1))
+        .await
         .after(after)
         .group(&MISC_GROUP)
         .group(&FUN_GROUP)
@@ -163,6 +165,8 @@ async fn main() -> Result<(), Box<dyn Error + Send + Sync>> {
         .framework(framework)
         .await
         .expect("Something went wrong while building the client.");
+
+    client.cache_and_http.cache.set_max_messages(256).await;
 
     {
         let mut data = client.data.write().await;
