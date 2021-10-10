@@ -27,8 +27,8 @@ async fn ping(ctx: &Context, msg: &Message) -> CommandResult {
 
     let latency = match runners.get(&ShardId(ctx.shard_id)) {
         Some(runner) => match runner.latency {
-            Some(ms) => format!("{} ms", ms.as_millis()),
-            _ => "? ms".to_string(),
+            Some(ms) => format!("{}ms", ms.as_millis()),
+            _ => "?ms".to_string(),
         },
         None => {
             msg.reply(ctx, "Something went wrong, Please try again.")
@@ -38,8 +38,22 @@ async fn ping(ctx: &Context, msg: &Message) -> CommandResult {
         }
     };
 
+    let icon_url = ctx.cache.current_user().await.face();
+
     msg.channel_id
-        .say(&ctx.http, &format!("Websocket: {}", latency))
+        .send_message(ctx, |message| {
+            message.embed(|embed| {
+                embed.author(|author| {
+                    author.name("Pong!");
+                    author.icon_url(icon_url);
+                    author
+                });
+                embed.description(&format!("**Shard {}**: {}", ctx.shard_id + 1, latency));
+                embed.color(0xF05B4A);
+                embed
+            });
+            message
+        })
         .await?;
 
     Ok(())
