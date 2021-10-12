@@ -41,8 +41,6 @@ use serenity::{
 use std::{collections::HashSet, error::Error, sync::Arc};
 use tokio::sync::Mutex;
 
-use crate::settings::settings;
-
 struct ShardManagerContainer;
 struct ReqwestContainer;
 
@@ -124,16 +122,16 @@ async fn after(_ctx: &Context, _msg: &Message, name: &str, result: CommandResult
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error + Send + Sync>> {
     // Initialize settings
-    settings::init();
+    let settings = settings::init();
 
     // Setup logger
     let mut logger = formatted_builder();
-    for (path, level) in &settings().logging.filters {
+    for (path, level) in &settings.logging.filters {
         logger.filter(Some(path), *level);
     }
     logger.init();
 
-    let http = Http::new_with_token(&settings().bot.token);
+    let http = Http::new_with_token(&settings.bot.token);
 
     let (owners, bot_id) = match http.get_current_application_info().await {
         Ok(info) => {
@@ -147,7 +145,7 @@ async fn main() -> Result<(), Box<dyn Error + Send + Sync>> {
 
     let framework = StandardFramework::new()
         .configure(|c| {
-            c.prefix(&settings().bot.prefix)
+            c.prefix(&settings.bot.prefix)
                 .on_mention(Some(bot_id))
                 .owners(owners)
                 .allow_dm(false)
@@ -160,7 +158,7 @@ async fn main() -> Result<(), Box<dyn Error + Send + Sync>> {
         .group(&FUN_GROUP)
         .help(&BOT_HELP);
 
-    let mut client = Client::builder(&settings().bot.token)
+    let mut client = Client::builder(&settings.bot.token)
         .event_handler(Handler)
         .framework(framework)
         .await

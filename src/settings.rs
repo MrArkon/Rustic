@@ -13,11 +13,13 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-use config::{Config, ConfigError, File};
 use log::LevelFilter;
-use once_cell::sync::OnceCell;
 use serde::Deserialize;
-use std::collections::HashMap;
+use std::{
+    collections::HashMap,
+    sync::{Arc, Mutex},
+};
+use typemap::Key;
 
 #[derive(Debug, Deserialize)]
 pub struct Settings {
@@ -38,32 +40,13 @@ pub struct LoggingSettings {
     pub filters: HashMap<String, LevelFilter>,
 }
 
-impl Settings {
-    pub fn new() -> Result<Self, ConfigError> {
-        let mut s = Config::new();
-
-        s.set_default("logging.level", "WARN")?;
-        s.set_default("logging.filters.rustic", "INFO")?;
-
-        s.merge(File::with_name("config.toml")).unwrap();
-
-        s.try_into()
-    }
+impl Key for Settings {
+    type Value = Arc<Mutex<Settings>>;
 }
 
-static SETTINGS: OnceCell<Settings> = OnceCell::new();
-
-pub fn settings() -> &'static Settings {
-    SETTINGS.get().expect("Settings were not initialized")
-}
-
-pub fn init() {
-    match Settings::new() {
-        Ok(settings) => {
-            let _ = SETTINGS.set(settings);
-        }
-        Err(e) => {
-            panic!("Failed to parse settings: {}", e);
-        }
-    }
+pub fn init() -> Settings {
+    let config = std::fs::read_to_string("config.toml")
+        .expect("Something went wrong while trying to parse the configuration file");
+    toml::from_str(&config)
+        .expect("Something went wrong while trying to deserialize the configuration file.")
 }
