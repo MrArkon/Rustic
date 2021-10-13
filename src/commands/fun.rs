@@ -1,6 +1,7 @@
 use rand::{self, Rng};
+use serde::Deserialize;
 use serenity::{
-    framework::standard::{macros::command, CommandResult},
+    framework::standard::{macros::command, Args, CommandResult},
     model::prelude::Message,
     prelude::Context,
 };
@@ -47,6 +48,7 @@ async fn cat(ctx: &Context, msg: &Message) -> CommandResult {
 
 #[command]
 #[min_args(1)]
+#[bucket = "basic"]
 #[usage = "<question>"]
 #[aliases("8ball", "8b")]
 #[description = "Ask a question to the magic 8ball"]
@@ -82,6 +84,94 @@ async fn eightball(ctx: &Context, msg: &Message) -> CommandResult {
         ),
     )
     .await?;
+
+    Ok(())
+}
+
+#[derive(Debug, Deserialize)]
+struct UrbanResponse {
+    list: Vec<Definition>,
+}
+
+#[derive(Debug, Deserialize)]
+struct Definition {
+    definition: String,
+    permalink: String,
+    word: String,
+    author: String,
+    thumbs_up: u32,
+    thumbs_down: u32,
+    written_on: String,
+}
+
+#[command]
+#[bucket = "basic"]
+#[usage = "<word>"]
+#[description = "Searches urban dictionary."]
+async fn urban(ctx: &Context, msg: &Message, args: Args) -> CommandResult {
+    if args.rest().is_empty() {
+        msg.channel_id
+            .say(&ctx.http, "Give me a word to look up for.")
+            .await?;
+        return Ok(());
+    }
+
+    let word = args.rest();
+
+    let client = ctx
+        .data
+        .read()
+        .await
+        .get::<ReqwestContainer>()
+        .cloned()
+        .unwrap();
+
+    let request = client
+        .get("http://api.urbandictionary.com/v0/define")
+        .query(&[("term", word)])
+        .send()
+        .await?;
+
+    if request.status() != 200 {
+        msg.channel_id
+            .say(&ctx.http, "Something went wrong, please try again later.")
+            .await?;
+
+        return Ok(());
+    }
+
+    let response: UrbanResponse = request.json().await?;
+
+    if response.list.is_empty() {
+        msg.channel_id
+            .say(&ctx.http, "No results found, sorry.")
+            .await?;
+        return Ok(());
+    }
+
+    let definition = response.list.get(0).unwrap();
+
+    msg.channel_id
+        .send_message(ctx, |message| {
+            message.embed(|embed| {
+                embed.title(&definition.word);
+                embed.url(&definition.permalink);
+                embed.description(&definition.definition);
+                embed.field(
+                    "Votes",
+                    format!(
+                        ":thumbsup: {} :thumbsdown: {}",
+                        &definition.thumbs_up, &definition.thumbs_down
+                    ),
+                    false,
+                );
+                embed.footer(|f| f.text(format!("by {}", &definition.author)));
+                embed.color(0xF05B4A);
+                embed
+            });
+            message
+        })
+        .await?;
 
     Ok(())
 }

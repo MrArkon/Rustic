@@ -93,7 +93,7 @@ impl EventHandler for Handler {
 struct Misc;
 
 #[group]
-#[commands(cat, eightball)]
+#[commands(cat, eightball, urban)]
 struct Fun;
 
 #[help]
