@@ -38,3 +38,7 @@ Assuming you have [Rust](https://rust-lang.org) & [Cargo](https://github.com/rus
 
 ## License
 Rustic is licensed under the AGPL 3.0 license. See the file [`LICENSE`](https://github.com/MrArkon/Rustic/blob/master/LICENSE) for more information.
+
+----
+
+<h4 align="center">Show some :heart: by starring :star: this repository!</h4>
