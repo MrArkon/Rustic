@@ -26,7 +26,7 @@ use serenity::{
     framework::standard::{
         help_commands,
         macros::{group, help, hook},
-        Args, CommandGroup, CommandResult, HelpOptions, StandardFramework,
+        Args, CommandGroup, CommandResult, DispatchError, HelpOptions, StandardFramework,
     },
     http::Http,
     model::{
@@ -119,6 +119,21 @@ async fn after(_ctx: &Context, _msg: &Message, name: &str, result: CommandResult
     }
 }
 
+#[hook]
+async fn dispatch_error(ctx: &Context, msg: &Message, error: DispatchError) {
+    if let DispatchError::Ratelimited(info) = error {
+        if info.is_first_try {
+            let _ = msg
+                .channel_id
+                .say(
+                    &ctx.http,
+                    &format!(":hourglass: | **Cooldown:** Try this again in {} seconds.", info.as_secs()),
+                )
+                .await;
+        }
+    }
+}
+
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error + Send + Sync>> {
     // Initialize settings
@@ -154,6 +169,7 @@ async fn main() -> Result<(), Box<dyn Error + Send + Sync>> {
         .bucket("basic", |b| b.time_span(5).limit(1))
         .await
         .after(after)
+        .on_dispatch_error(dispatch_error)
         .group(&MISC_GROUP)
         .group(&FUN_GROUP)
         .help(&BOT_HELP);
