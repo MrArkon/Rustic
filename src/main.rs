@@ -127,7 +127,10 @@ async fn dispatch_error(ctx: &Context, msg: &Message, error: DispatchError) {
                 .channel_id
                 .say(
                     &ctx.http,
-                    &format!(":hourglass: | **Cooldown:** Try this again in {} seconds.", info.as_secs()),
+                    &format!(
+                        ":hourglass: | **Cooldown:** Try this again in {} seconds.",
+                        info.as_secs()
+                    ),
                 )
                 .await;
         }
