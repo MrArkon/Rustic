@@ -30,7 +30,7 @@
 </p>
 
 ## Setup
-After cloning the repository, Rename `config_example.toml` to `config.toml`
+After cloning the repository, Rename `config.toml.example` to `config.toml`
 
 Make an application on Discord's [developer portal](https://discord.com/developers/applications) and copy the bot token & application ID to the `config.toml` file
 
