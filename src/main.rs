@@ -89,7 +89,7 @@ impl EventHandler for Handler {
 }
 
 #[group]
-#[commands(ping)]
+#[commands(ping, about)]
 struct Misc;
 
 #[group]

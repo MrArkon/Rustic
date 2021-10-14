@@ -4,11 +4,12 @@ use serenity::{
     model::prelude::Message,
     prelude::Context,
 };
+use simple_process_stats::ProcessStats;
 
 use crate::ShardManagerContainer;
 
 #[command]
-#[description = "Check if the bot is working"]
+#[description = "Check if the bot is working."]
 async fn ping(ctx: &Context, msg: &Message) -> CommandResult {
     let data_read = ctx.data.read().await;
 
@@ -50,6 +51,56 @@ async fn ping(ctx: &Context, msg: &Message) -> CommandResult {
                 });
                 embed.description(&format!("**Shard {}**: {}", ctx.shard_id + 1, latency));
                 embed.color(0xF05B4A);
+                embed
+            });
+            message
+        })
+        .await?;
+
+    Ok(())
+}
+
+#[command]
+#[aliases("statistics", "stats")]
+#[description = "Tells you information about the bot itself."]
+async fn about(ctx: &Context, msg: &Message) -> CommandResult {
+    let discriminator = ctx.cache.current_user().await.discriminator;
+    let icon_url = ctx.cache.current_user().await.face();
+
+    let total_guilds = ctx.cache.guilds().await.len();
+    let total_shards = ctx.cache.shard_count().await;
+    let total_users = ctx.cache.user_count().await;
+
+    let process_stats = ProcessStats::get()
+        .await
+        .expect("Couldn't get statistics for the running process");
+
+    msg.channel_id
+        .send_message(ctx, |message| {
+            message.embed(|embed| {
+                embed.author(|author| {
+                    author.name(format!("Rustic#{}", discriminator));
+                    author.icon_url(icon_url);
+                    author
+                });
+                embed.description(
+                    "
+                    Rustic is an open source multi-purpose bot packed with features
+                    You can find my source code on [github](https://github.com/MrArkon/Rustic), Developed by [MrArkon](https://mrarkon.github.io)
+                ",
+                );
+                embed.fields(vec![
+                    ("Guilds", total_guilds.to_string(), true),
+                    ("Users", total_users.to_string(), true),
+                    ("Shard", format!("{}/{}", ctx.shard_id + 1, total_shards), true),
+                    (
+                        "Memory Usage",
+                        format!("{} MB", process_stats.memory_usage_bytes / (1024 * 1024)),
+                        true,
+                    )
+                ]);
+                embed.color(0xF05B4A);
+                embed.footer(|f| f.text("Written with Rust & Serenity-rs"));
                 embed
             });
             message
