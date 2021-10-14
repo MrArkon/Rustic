@@ -8,12 +8,13 @@ authors    = ["MrArkon <mrarkon@outlook.com>"]
 repository = "https://github.com/MrArkon/Rustic"
 
 [dependencies]
-once_cell         = "1.8.0"
-pretty_env_logger = "0.4.0"
-rand              = "0.8.4"
-serenity          = "0.10.9"
-toml              = "0.5.8"
-typemap           = "0.3.3"
+once_cell            = "1.8.0"
+pretty_env_logger    = "0.4.0"
+rand                 = "0.8.4"
+serenity             = "0.10.9"
+simple-process-stats = "1.0.0"
+toml                 = "0.5.8"
+typemap              = "0.3.3"
 
 [dependencies.log]
 version  = "0.4.14"
