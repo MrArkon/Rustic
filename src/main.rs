@@ -168,7 +168,9 @@ async fn main() -> Result<(), Box<dyn Error + Send + Sync>> {
 
     {
         let mut data = client.data.write().await;
-        let reqwest_client = ReqwestClient::builder().build()?;
+        let reqwest_client = ReqwestClient::builder()
+            .user_agent(format!("Rustic/{} (https://github.com/MrArkon/Rustic)", env!("CARGO_PKG_VERSION")))
+            .build()?;
 
         data.insert::<ShardManagerContainer>(Arc::clone(&client.shard_manager));
         data.insert::<ReqwestContainer>(reqwest_client);
