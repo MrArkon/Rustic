@@ -38,11 +38,13 @@ use serenity::{
     },
     prelude::{Client, Context, EventHandler, TypeMapKey},
 };
+use sqlx::{postgres::PgPoolOptions, PgPool};
 use std::{collections::HashSet, error::Error, sync::Arc};
 use tokio::sync::Mutex;
 
 struct ShardManagerContainer;
 struct ReqwestContainer;
+struct PgPoolContainer;
 
 impl TypeMapKey for ShardManagerContainer {
     type Value = Arc<Mutex<ShardManager>>;
@@ -50,6 +52,10 @@ impl TypeMapKey for ShardManagerContainer {
 
 impl TypeMapKey for ReqwestContainer {
     type Value = ReqwestClient;
+}
+
+impl TypeMapKey for PgPoolContainer {
+    type Value = PgPool;
 }
 
 struct Handler;
@@ -193,9 +199,14 @@ async fn main() -> Result<(), Box<dyn Error + Send + Sync>> {
                 env!("CARGO_PKG_VERSION")
             ))
             .build()?;
+        let pool = PgPoolOptions::new()
+            .max_connections(settings.database.max_connections)
+            .connect(&settings.database.url)
+            .await?;
 
         data.insert::<ShardManagerContainer>(Arc::clone(&client.shard_manager));
         data.insert::<ReqwestContainer>(reqwest_client);
+        data.insert::<PgPoolContainer>(pool);
     }
 
     let shard_manager = client.shard_manager.clone();
