@@ -30,7 +30,7 @@
 </p>
 
 ## 🚀 Setup & Configuration
-> Note: This guide assumes you have [Rust](https://rust-lang.org), [Cargo](https://github.com/rust-lang/cargo) & [PostGreSQL](https://www.postgresql.org/) installed
+> Note: This guide assumes you have [Rust](https://rust-lang.org), [Cargo](https://github.com/rust-lang/cargo) & [PostGreSQL](https://www.postgresql.org/) installed. You will not get any support for self-hosting.
 1. Rename `config.toml.example` to `config.toml`
 2. Enter the appropriate details in the config file
 3. You should be able to run the bot with `cargo run --release`
