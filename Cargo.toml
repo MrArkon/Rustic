@@ -1,6 +1,6 @@
 [package]
 name       = "rustic"
-version    = "0.1.1"
+version    = "0.2.0"
 edition    = "2018" # TODO: Update to 2021 editon when it's released in Oct.
 publish    = false
 license    = "AGPL-3.0-or-later"
