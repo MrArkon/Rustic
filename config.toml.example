@@ -8,3 +8,7 @@ level          = "WARN"
 
     [logging.filters]
     rustic     = "INFO"
+
+[database]
+url             = ""
+max_connections = 5
