@@ -25,6 +25,7 @@ use typemap::Key;
 pub struct Settings {
     pub bot: BotSettings,
     pub logging: LoggingSettings,
+    pub database: DatabaseSettings,
 }
 
 #[derive(Debug, Deserialize)]
@@ -38,6 +39,12 @@ pub struct BotSettings {
 pub struct LoggingSettings {
     pub level: LevelFilter,
     pub filters: HashMap<String, LevelFilter>,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct DatabaseSettings {
+    pub url: String,
+    pub max_connections: u32,
 }
 
 impl Key for Settings {
