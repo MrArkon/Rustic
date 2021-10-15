@@ -28,6 +28,10 @@ features = ["json"]
 version  = "1.0.130"
 features = ["derive"]
 
+[dependencies.sqlx]
+version  = "0.5.9"
+features = ["runtime-tokio-rustls", "postgres", "macros"]
+
 [dependencies.tokio]
 version  = "1.11.0"
 features = ["full"]
