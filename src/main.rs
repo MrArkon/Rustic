@@ -204,6 +204,9 @@ async fn main() -> Result<(), Box<dyn Error + Send + Sync>> {
             .connect(&settings.database.url)
             .await?;
 
+        // Run migrations
+        sqlx::migrate!("./migrations").run(&pool).await.expect("Couldn't run database migrations");
+
         data.insert::<ShardManagerContainer>(Arc::clone(&client.shard_manager));
         data.insert::<ReqwestContainer>(reqwest_client);
         data.insert::<PgPoolContainer>(pool);
