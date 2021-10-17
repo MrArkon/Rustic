@@ -110,7 +110,7 @@ async fn about(ctx: &Context, msg: &Message) -> CommandResult {
                     ("Shard", format!("{}/{}", ctx.shard_id + 1, total_shards), true),
                     (
                         "Memory Usage",
-                        format!("{} MB", process_stats.memory_usage_bytes / (1024 * 1024)),
+                        format!("{} MB", process_stats.memory_usage_bytes / 8000000),
                         true,
                     )
                 ]);
