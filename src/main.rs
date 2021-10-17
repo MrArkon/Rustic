@@ -169,8 +169,7 @@ async fn main() -> Result<(), Box<dyn Error + Send + Sync>> {
 
     let framework = StandardFramework::new()
         .configure(|c| {
-            c.prefix(&settings.bot.prefix)
-                .on_mention(Some(bot_id))
+            c.on_mention(Some(bot_id))
                 .owners(owners)
                 .allow_dm(false)
                 .case_insensitivity(true)

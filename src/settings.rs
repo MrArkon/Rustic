@@ -31,7 +31,6 @@ pub struct Settings {
 #[derive(Debug, Deserialize)]
 pub struct BotSettings {
     pub token: String,
-    pub prefix: String,
     pub application_id: u64,
 }
 
