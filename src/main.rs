@@ -38,7 +38,7 @@ use serenity::{
     },
     prelude::{Client, Context, EventHandler, TypeMapKey},
 };
-use sqlx::{postgres::PgPoolOptions, PgPool};
+use sqlx::{postgres::PgPoolOptions, query, PgPool};
 use std::{collections::HashSet, error::Error, sync::Arc};
 use tokio::sync::Mutex;
 
@@ -143,6 +143,40 @@ async fn dispatch_error(ctx: &Context, msg: &Message, error: DispatchError) {
     }
 }
 
+#[hook]
+async fn dynamic_prefix(ctx: &Context, msg: &Message) -> Option<String> {
+    let prefix;
+
+    if let Some(id) = &msg.guild_id {
+        let pool = {
+            let data = ctx.data.read().await;
+            data.get::<PgPoolContainer>().unwrap().clone()
+        };
+
+        match query!("SELECT prefix FROM guilds WHERE guild_id=$1", id.0 as i64)
+            .fetch_optional(&pool)
+            .await
+        {
+            Ok(response) => {
+                prefix = if let Some(result) = response {
+                    result.prefix.unwrap_or_else(|| "~".to_string())
+                } else {
+                    "~".to_string()
+                };
+            }
+            Err(why) => {
+                error!("Couldn't query database for prefix: {}", why);
+                prefix = "~".to_string();
+            }
+        };
+    } else {
+        // No prefix in dms
+        prefix = "".to_string();
+    };
+
+    Some(prefix)
+}
+
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error + Send + Sync>> {
     // Initialize settings
@@ -170,8 +204,8 @@ async fn main() -> Result<(), Box<dyn Error + Send + Sync>> {
     let framework = StandardFramework::new()
         .configure(|c| {
             c.on_mention(Some(bot_id))
+                .dynamic_prefix(dynamic_prefix)
                 .owners(owners)
-                .allow_dm(false)
                 .case_insensitivity(true)
         })
         .bucket("basic", |b| b.time_span(5).limit(1))
