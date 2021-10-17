@@ -82,11 +82,7 @@ impl EventHandler for Handler {
             );
         }
 
-        ctx.set_activity(Activity::watching(&format!(
-            "{} servers!",
-            ready.guilds.len()
-        )))
-        .await;
+        ctx.set_activity(Activity::listening("@Rustic help")).await;
     }
 
     async fn resume(&self, _: Context, _: ResumedEvent) {
