@@ -33,7 +33,16 @@
 > Note: This guide assumes you have [Rust](https://rust-lang.org), [Cargo](https://github.com/rust-lang/cargo) & [PostGreSQL](https://www.postgresql.org/) installed. You will not get any support for self-hosting.
 1. Rename `config.toml.example` to `config.toml`
 2. Enter the appropriate details in the config file
-3. You should be able to run the bot with `cargo run --release`
+3. Add your database url to your environment variables
+4. Create the database using the sqlx CLI
+```shell
+$ sqlx database create
+```
+5. Apply the migrations using the sqlx CLI
+```shell
+$ sqlx migrate run
+```
+6. You should be able to run the bot with `cargo run --release`
 
 ## 📃 License
 Rustic is licensed under the AGPL 3.0 license. See the file [`LICENSE`](https://github.com/MrArkon/Rustic/blob/master/LICENSE) for more information.
