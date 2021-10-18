@@ -13,7 +13,10 @@ jobs:
           profile: minimal
           toolchain: stable
           override: true
-      - run: install sqlx-cli --no-default-features --features postgres
+      - uses: actions-rs/cargo@v1
+        with:
+          command: install sqlx-cli
+          args: --all -- --check
       - uses: actions-rs/cargo@v1
         with:
           command: sqlx prepare --check
