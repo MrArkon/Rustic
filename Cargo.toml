@@ -30,7 +30,7 @@ features = ["derive"]
 
 [dependencies.sqlx]
 version  = "0.5.9"
-features = ["runtime-tokio-rustls", "postgres", "macros"]
+features = ["runtime-tokio-rustls", "postgres", "offline", "macros"]
 
 [dependencies.tokio]
 version  = "1.11.0"
