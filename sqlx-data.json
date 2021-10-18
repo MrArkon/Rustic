@@ -1,3 +1,23 @@
 {
-  "db": "PostgreSQL"
+  "db": "PostgreSQL",
+  "4e2d622efb71056d99cec00c0fe3330d8b4d6a01a34d4c6f8d335f3a74343915": {
+    "query": "SELECT prefix FROM guilds WHERE guild_id=$1",
+    "describe": {
+      "columns": [
+        {
+          "ordinal": 0,
+          "name": "prefix",
+          "type_info": "Text"
+        }
+      ],
+      "parameters": {
+        "Left": [
+          "Int8"
+        ]
+      },
+      "nullable": [
+        true
+      ]
+    }
+  }
 }
