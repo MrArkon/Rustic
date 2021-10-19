@@ -16,7 +16,7 @@
 mod commands;
 mod settings;
 
-use commands::{fun::*, misc::*};
+use commands::{config::*, fun::*, misc::*};
 use log::{error, info};
 use pretty_env_logger::formatted_builder;
 use reqwest::Client as ReqwestClient;
@@ -97,6 +97,10 @@ struct Misc;
 #[group]
 #[commands(cat, eightball, urban)]
 struct Fun;
+
+#[group]
+#[commands(prefix)]
+struct Configuration;
 
 #[help]
 #[max_levenshtein_distance(2)]
@@ -210,6 +214,7 @@ async fn main() -> Result<(), Box<dyn Error + Send + Sync>> {
         .on_dispatch_error(dispatch_error)
         .group(&MISC_GROUP)
         .group(&FUN_GROUP)
+        .group(&CONFIGURATION_GROUP)
         .help(&BOT_HELP);
 
     let mut client = Client::builder(&settings.bot.token)
