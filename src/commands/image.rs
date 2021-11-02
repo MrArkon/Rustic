@@ -25,6 +25,8 @@ use std::borrow::Cow;
 
 #[command]
 #[usage = "[member]"]
+#[bucket = "basic"]
+#[description = "Adds a grayscale filter to your avatar or the mentioned member."]
 #[aliases("gray", "grey", "greyscale")]
 async fn grayscale(ctx: &Context, msg: &Message, mut args: Args) -> CommandResult {
     let url = {
