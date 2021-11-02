@@ -15,11 +15,11 @@
 
 use log::LevelFilter;
 use serde::Deserialize;
+use serenity::prelude::TypeMapKey;
 use std::{
     collections::HashMap,
     sync::{Arc, Mutex},
 };
-use typemap::Key;
 
 #[derive(Debug, Deserialize)]
 pub struct Settings {
@@ -46,7 +46,7 @@ pub struct DatabaseSettings {
     pub max_connections: u32,
 }
 
-impl Key for Settings {
+impl TypeMapKey for Settings {
     type Value = Arc<Mutex<Settings>>;
 }
 
