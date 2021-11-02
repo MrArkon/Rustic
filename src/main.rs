@@ -16,7 +16,7 @@
 mod commands;
 mod settings;
 
-use commands::{config::*, fun::*, misc::*};
+use commands::{config::*, fun::*, image::*, misc::*};
 use log::{error, info};
 use pretty_env_logger::formatted_builder;
 use reqwest::Client as ReqwestClient;
@@ -97,6 +97,10 @@ struct Misc;
 #[group]
 #[commands(cat, eightball, urban)]
 struct Fun;
+
+#[group]
+#[commands(grayscale)]
+struct Image;
 
 #[group]
 #[commands(prefix)]
@@ -215,6 +219,7 @@ async fn main() -> Result<(), Box<dyn Error + Send + Sync>> {
         .group(&MISC_GROUP)
         .group(&FUN_GROUP)
         .group(&CONFIGURATION_GROUP)
+        .group(&IMAGE_GROUP)
         .help(&BOT_HELP);
 
     let mut client = Client::builder(&settings.bot.token)
