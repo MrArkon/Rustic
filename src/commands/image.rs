@@ -22,6 +22,7 @@ use serenity::{
     prelude::Context,
 };
 use std::borrow::Cow;
+use image::ImageFormat;
 
 #[command]
 #[usage = "[member]"]
@@ -31,7 +32,7 @@ use std::borrow::Cow;
 async fn grayscale(ctx: &Context, msg: &Message, mut args: Args) -> CommandResult {
     let url = {
         if args.message().is_empty() {
-            msg.author.face()
+            msg.author.face().replace("webp", "png").replace("gif", "png")
         } else {
             let m = <Member as ArgumentConvert>::convert(
                 ctx,
@@ -41,7 +42,7 @@ async fn grayscale(ctx: &Context, msg: &Message, mut args: Args) -> CommandResul
             )
             .await?;
             args.advance();
-            m.face()
+            m.face().replace("webp", "png").replace("gif", "png")
         }
     };
 
@@ -52,7 +53,7 @@ async fn grayscale(ctx: &Context, msg: &Message, mut args: Args) -> CommandResul
         .get::<ReqwestContainer>()
         .cloned()
         .unwrap();
-    let image_bytes = client
+    let avatar_bytes = client
         .get(&url)
         .send()
         .await?
@@ -62,7 +63,7 @@ async fn grayscale(ctx: &Context, msg: &Message, mut args: Args) -> CommandResul
         .collect::<Vec<u8>>();
 
     let mut bytes = Vec::new();
-    let buffer = libwebp_image::webp_load_from_memory(&image_bytes)?.into_rgba8();
+    let buffer = image::load_from_memory_with_format(&avatar_bytes, ImageFormat::Png)?.into_rgba8();
 
     image::DynamicImage::ImageRgba8(buffer)
         .grayscale()
