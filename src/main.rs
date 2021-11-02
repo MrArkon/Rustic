@@ -223,6 +223,7 @@ async fn main() -> Result<(), Box<dyn Error + Send + Sync>> {
         .configure(|c| {
             c.on_mention(Some(bot_id))
                 .dynamic_prefix(dynamic_prefix)
+                .prefix("")
                 .owners(owners)
                 .case_insensitivity(true)
         })

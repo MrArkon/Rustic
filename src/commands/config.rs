@@ -1,3 +1,18 @@
+// Copyright (C) 2021 MrArkon
+
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Affero General Public License as published
+// by the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Affero General Public License for more details.
+
+// You should have received a copy of the GNU Affero General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 use crate::PgPoolContainer;
 use log::error;
 use serenity::{
@@ -10,8 +25,9 @@ use sqlx::query;
 #[command]
 #[only_in(guilds)]
 #[usage = "[prefix]"]
-async fn prefix(ctx: &Context, msg: &Message, args: Args) -> CommandResult {
-    let new_prefix = args.rest();
+#[description = "Not providing the prefix will show the current prefix. Providing the prefix will set the it to that prefix. To use spaces in your prefix surround it with double quotation marks \"an example \""]
+async fn prefix(ctx: &Context, msg: &Message, mut args: Args) -> CommandResult {
+    let new_prefix = args.single_quoted::<String>().unwrap();
 
     if new_prefix.is_empty() {
         let prefix;
