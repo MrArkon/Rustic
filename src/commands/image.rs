@@ -14,6 +14,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 use crate::ReqwestContainer;
+use image::ImageFormat;
 use serenity::utils::ArgumentConvert;
 use serenity::{
     framework::standard::{macros::command, Args, CommandResult},
@@ -22,7 +23,6 @@ use serenity::{
     prelude::Context,
 };
 use std::borrow::Cow;
-use image::ImageFormat;
 
 #[command]
 #[usage = "[member]"]
@@ -32,7 +32,10 @@ use image::ImageFormat;
 async fn grayscale(ctx: &Context, msg: &Message, mut args: Args) -> CommandResult {
     let url = {
         if args.message().is_empty() {
-            msg.author.face().replace("webp", "png").replace("gif", "png")
+            msg.author
+                .face()
+                .replace("webp", "png")
+                .replace("gif", "png")
         } else {
             let m = <Member as ArgumentConvert>::convert(
                 ctx,
