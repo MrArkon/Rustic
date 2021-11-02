@@ -122,10 +122,24 @@ async fn bot_help(
 }
 
 #[hook]
-async fn after(_ctx: &Context, _msg: &Message, name: &str, result: CommandResult) {
+async fn after(ctx: &Context, msg: &Message, name: &str, result: CommandResult) {
     match result {
         Ok(()) => {}
-        Err(why) => error!("Command '{}' returned an error {:?}", name, why),
+        Err(why) => {
+            msg.channel_id
+                .send_message(ctx, |message| {
+                    message.embed(|embed| {
+                        embed.title(":warning: | Unknown Error!");
+                        embed.description(format!("Sorry, An unknown error has occured, it has been reported to my developer.\n\n**Information:**```rust\n{:?}```", why));
+                        embed.color(0xF05B4A);
+                        embed
+                    });
+                    message
+                })
+                .await
+                .unwrap();
+            error!("Command '{}' returned an error {:?}", name, why);
+        }
     }
 }
 
