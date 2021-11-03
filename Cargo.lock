@@ -1456,10 +1456,12 @@ name = "rustic"
 version = "0.2.0"
 dependencies = [
  "image",
+ "lazy_static",
  "log",
  "once_cell",
  "pretty_env_logger",
  "rand 0.8.4",
+ "regex",
  "reqwest",
  "serde",
  "serenity",
