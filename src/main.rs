@@ -99,7 +99,7 @@ struct Misc;
 struct Fun;
 
 #[group]
-#[commands(grayscale)]
+#[commands(blur, grayscale)]
 struct Image;
 
 #[group]

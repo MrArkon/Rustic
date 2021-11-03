@@ -86,3 +86,65 @@ async fn grayscale(ctx: &Context, msg: &Message, mut args: Args) -> CommandResul
 
     Ok(())
 }
+
+#[command]
+#[usage = "[member]"]
+#[bucket = "basic"]
+#[description = "Blur your avatar or the mentioned member."]
+async fn blur(ctx: &Context, msg: &Message, mut args: Args) -> CommandResult {
+    let url = {
+        if args.message().is_empty() {
+            msg.author
+                .face()
+                .replace("webp", "png")
+                .replace("gif", "png")
+        } else {
+            let m = <Member as ArgumentConvert>::convert(
+                ctx,
+                msg.guild_id,
+                Some(msg.channel_id),
+                args.message(),
+            )
+            .await?;
+            args.advance();
+            m.face().replace("webp", "png").replace("gif", "png")
+        }
+    };
+
+    let client = ctx
+        .data
+        .read()
+        .await
+        .get::<ReqwestContainer>()
+        .cloned()
+        .unwrap();
+    let avatar_bytes = client
+        .get(&url)
+        .send()
+        .await?
+        .bytes()
+        .await?
+        .into_iter()
+        .collect::<Vec<u8>>();
+
+    let mut bytes = Vec::new();
+    let buffer = image::load_from_memory_with_format(&avatar_bytes, ImageFormat::Png)?.into_rgba8();
+
+    image::DynamicImage::ImageRgba8(buffer)
+        .blur(5.0)
+        .write_to(&mut bytes, image::ImageOutputFormat::Png)?;
+
+    let attachment = AttachmentType::Bytes {
+        data: Cow::from(bytes),
+        filename: String::from("blur.png"),
+    };
+
+    msg.channel_id
+        .send_message(ctx, |message| {
+            message.add_file(attachment);
+            message
+        })
+        .await?;
+
+    Ok(())
+}
