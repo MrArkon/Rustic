@@ -25,6 +25,7 @@ use crate::ShardManagerContainer;
 
 #[command]
 #[description = "Check if the bot is working."]
+#[bucket = "basic"]
 async fn ping(ctx: &Context, msg: &Message) -> CommandResult {
     let data_read = ctx.data.read().await;
 
@@ -76,6 +77,7 @@ async fn ping(ctx: &Context, msg: &Message) -> CommandResult {
 }
 
 #[command]
+#[bucket = "basic"]
 #[aliases("statistics", "stats")]
 #[description = "Tells you information about the bot itself."]
 async fn about(ctx: &Context, msg: &Message) -> CommandResult {
