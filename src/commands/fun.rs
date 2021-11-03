@@ -13,13 +13,16 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+use lazy_static::lazy_static;
 use rand::{self, Rng};
+use regex::{Captures, Regex};
 use serde::Deserialize;
 use serenity::{
     framework::standard::{macros::command, Args, CommandResult},
     model::prelude::Message,
     prelude::Context,
 };
+use std::borrow::Cow;
 
 use crate::ReqwestContainer;
 
@@ -119,6 +122,19 @@ struct Definition {
     written_on: String,
 }
 
+fn cleanup_definition(definition: &str) -> Cow<str> {
+    lazy_static! {
+        static ref RE: Regex = Regex::new(r"(\[(?P<w>.+?)\])").unwrap();
+    }
+    RE.replace_all(definition, |caps: &Captures| {
+        format!(
+            "[{}](http://{}.urbanup.com)",
+            &caps[2],
+            &caps[2].replace(" ", "-")
+        )
+    })
+}
+
 #[command]
 #[bucket = "basic"]
 #[usage = "<word>"]
@@ -171,7 +187,7 @@ async fn urban(ctx: &Context, msg: &Message, args: Args) -> CommandResult {
             message.embed(|embed| {
                 embed.title(&definition.word);
                 embed.url(&definition.permalink);
-                embed.description(&definition.definition);
+                embed.description(cleanup_definition(&definition.definition));
                 embed.field(
                     "Votes",
                     format!(
