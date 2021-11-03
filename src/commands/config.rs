@@ -27,9 +27,7 @@ use sqlx::query;
 #[usage = "[prefix]"]
 #[description = "Not providing the prefix will show the current prefix. Providing the prefix will set the it to that prefix. To use spaces in your prefix surround it with double quotation marks \"an example \""]
 async fn prefix(ctx: &Context, msg: &Message, mut args: Args) -> CommandResult {
-    let new_prefix = args.single_quoted::<String>().unwrap();
-
-    if new_prefix.is_empty() {
+    if args.is_empty() {
         let prefix;
         let guild_id = msg.guild_id.unwrap().0 as i64;
 
@@ -65,6 +63,7 @@ async fn prefix(ctx: &Context, msg: &Message, mut args: Args) -> CommandResult {
         return Ok(());
     }
 
+    let new_prefix = args.single_quoted::<String>().unwrap();
     let pool = {
         let data = ctx.data.read().await;
         data.get::<PgPoolContainer>().unwrap().clone()
