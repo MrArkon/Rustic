@@ -29,6 +29,9 @@
   </a>
 </p>
 
+# Note: Repository Archived
+You might have noticed the activity on this repository has been very low since last year which is the reason why I decided to archive this project. I might come back to this project in the future but as of now I am focusing on my other two bots: [JukeBox](https://github.com/MrArkon/JukeBox) and [Winston](https://github.com/MrArkon/Winston)
+
 ## 🚀 Setup & Configuration
 > Note: This guide assumes you have [Rust](https://rust-lang.org), [Cargo](https://github.com/rust-lang/cargo) & [PostGreSQL](https://www.postgresql.org/) installed. You will not get any support for self-hosting.
 1. Rename `config.toml.example` to `config.toml`
